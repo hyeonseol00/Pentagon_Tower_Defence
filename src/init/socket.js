@@ -11,6 +11,7 @@ const initSocket = (server) => {
   io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
+    // registerHandler(io); // 여기서는 registerHandler를 호출하지 않습니다.
 
     socket.on('renewalHighScore', async (payload) => {
       const response = await renewalHighScore(payload);
@@ -21,6 +22,7 @@ const initSocket = (server) => {
       console.log('User disconnected:', socket.id);
     });
 
+    // 여기서 registerHandler를 호출합니다.
     registerHandler(io);
   });
 };
