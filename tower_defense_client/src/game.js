@@ -216,13 +216,6 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
-        // 타워가 몬스터를 공격해서 죽였을 때
-        if (monster.hp <= 0) {
-          sendEvent(23, {
-            monsterLevel: monster.level,
-            score: score,
-          });
-        }
       }
     });
   });
@@ -242,19 +235,10 @@ function gameLoop() {
       }
       monster.draw(ctx);
     } else {
-      /* 몬스터가 기지에 부딪쳐 죽었을 때 */
-
       // 몬스터 사망
       sendEvent(23, {
         monsterLevel: monster.level,
         score: score,
-      });
-
-      // 기지의 체력 감소
-      sendEvent(24, {
-        monsterLevel: monster.level,
-        monsterAtk: monster.attackPower,
-        hp: baseHp,
       });
 
       monsters.splice(i, 1);
