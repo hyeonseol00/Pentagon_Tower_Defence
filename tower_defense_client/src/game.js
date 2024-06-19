@@ -177,7 +177,7 @@ function placeNewTower() {
       gold: userGold,
     });
   } else {
-    alert('골드가 부족합니다!');
+    console.log('골드가 부족합니다!');
   }
 }
 
