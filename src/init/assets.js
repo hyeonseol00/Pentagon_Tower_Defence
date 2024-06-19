@@ -21,10 +21,12 @@ const readFileAsync = (filename) => {
 
 export const loadGameAssets = async () => {
   try {
-    const [templates, items] = await Promise.all([
+    const [templates, monster, commonData] = await Promise.all([
       readFileAsync('template.json'),
+      readFileAsync('monster.json'),
+      readFileAsync('common_data.json'),
     ]);
-    gameAssets = { templates, items };
+    gameAssets = { templates, monster, commonData };
     return gameAssets;
   } catch (error) {
     throw new Error('에셋 데이터 로드에 실패했습니다: ' + error.message);

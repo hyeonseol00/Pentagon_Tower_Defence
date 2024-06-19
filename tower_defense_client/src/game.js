@@ -249,6 +249,7 @@ function gameLoop() {
 }
 
 function initGame() {
+  console.log('게임 시작');
   if (isInitGame) {
     return;
   }
@@ -291,7 +292,22 @@ Promise.all([
   });
 
   serverSocket.on('connection', (data) => {
-    console.log('connection: ', data);
+    console.log('connection: ', data.uuid);
+  });
+
+  serverSocket.on('dataSync', async (data) => {
+    console.log('데이터 싱크 시도');
+    let dataSync = await DataSync(data);
+    if (dataSync) {
+      console.log('데이터가 성공적으로 싱크되었습니다.');
+      if (!isInitGame) {
+        initGame();
+      }
+      return;
+    } else {
+      console.log('데이터 싱크를 실패했습니다.');
+      //location.reload();
+    }
   });
 
   /* 
@@ -299,11 +315,30 @@ Promise.all([
     e.g. serverSocket.on("...", () => {...});
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
-
-  if (!isInitGame) {
-    initGame();
-  }
 });
+
+// 게임 시작 시 데이터 대입
+async function DataSync(data) {
+  try {
+    // 몬스터에 대한 정보
+    monsterLevel = 1;
+    monsterSpawnInterval = 1200;
+
+    // 유저 플레이에 대한 정보
+    userGold = data.commonData.data[0].user_gold;
+    baseHp = data.commonData.data[0].base_hp;
+    numOfInitialTowers = data.commonData.data[0].num_of_initial_towers;
+
+    score = 0;
+    highScore = 0;
+
+    // 정보를 알맞게 저눕 대입했을시 true 를 반환
+    return true;
+  } catch (error) {
+    // 정보 대입간에 문제가 발생 시 false 를 반환
+    return false;
+  }
+}
 
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {

@@ -15,9 +15,15 @@ export const handleConnection = (socket, userUUID) => {
   );
   console.log('현재 접속 중인 사용자:', getUsers());
 
-  const { templates } = getGameAssets();
+  const { templates, monster, commonData } = getGameAssets();
 
-  socket.emit('connection', { uuid: userUUID });
+  socket.emit('connection', {
+    uuid: userUUID,
+  });
+  socket.emit('dataSync', {
+    monster: monster,
+    commonData: commonData,
+  });
 };
 
 export const handleEvent = (io, socket, data) => {
