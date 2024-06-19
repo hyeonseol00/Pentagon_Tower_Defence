@@ -15,15 +15,15 @@ export class Base {
       this.x - this.width,
       this.y - this.height / 2,
       this.width,
-      this.height
+      this.height,
     );
 
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "white";
+    ctx.font = '16px Arial';
+    ctx.fillStyle = 'white';
     ctx.fillText(
       `HP: ${this.hp}/${this.maxHp}`,
       this.x - this.width,
-      this.y - this.height / 2 - 10
+      this.y - this.height / 2 - 10,
     );
   }
 
@@ -31,6 +31,13 @@ export class Base {
     // 기지가 데미지를 입는 메소드입니다.
     // 몬스터가 기지의 HP를 감소시키고, HP가 0 이하가 되면 게임 오버 처리를 해요!
     this.hp -= amount;
+
+    sendEvent(24, {
+      monsterLevel: monster.level,
+      monsterAtk: monster.attackPower,
+      hp: baseHp,
+    });
+
     return this.hp <= 0; // 기지의 HP가 0 이하이면 true, 아니면 false
   }
 }
