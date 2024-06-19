@@ -142,13 +142,9 @@ function getRandomPositionNearPath(maxDistance) {
 }
 
 function placeInitialTowers() {
-  /* 
-	  타워를 초기에 배치하는 함수입니다.
-	  무언가 빠진 코드가 있는 것 같지 않나요? 
-	*/
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y);
+    const tower = new Tower(x, y, towerCost); // towerCost를 사용하여 새 타워 생성
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
@@ -161,13 +157,9 @@ function placeInitialTowers() {
 }
 
 function placeNewTower() {
-  /* 
-	  타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치하면 됩니다.
-	  빠진 코드들을 채워넣어주세요! 
-	*/
+  const { x, y } = getRandomPositionNearPath(200);
   if (userGold >= towerCost) {
-    const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y, towerCost);
+    const tower = new Tower(x, y, towerCost); // 타워 구입 시 비용이 필요한 경우
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
