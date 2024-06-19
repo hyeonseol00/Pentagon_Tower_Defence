@@ -148,7 +148,7 @@ function placeInitialTowers() {
 	*/
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y, towerCost);
+    const tower = new Tower(x, y);
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
@@ -167,7 +167,7 @@ function placeNewTower() {
 	*/
   if (userGold >= towerCost) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y);
+    const tower = new Tower(x, y, towerCost);
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
@@ -177,7 +177,7 @@ function placeNewTower() {
       gold: userGold,
     });
   } else {
-    alert('골드가 부족합니다!');
+    console.log('골드가 부족합니다!');
   }
 }
 
@@ -216,13 +216,6 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
-        // 타워가 몬스터를 공격해서 죽였을 때
-        if (monster.hp <= 0) {
-          sendEvent(23, {
-            monsterLevel: monster.level,
-            score: score,
-          });
-        }
       }
     });
   });
@@ -242,30 +235,15 @@ function gameLoop() {
       }
       monster.draw(ctx);
     } else {
-      /* 몬스터가 기지에 부딪쳐 죽었을 때 */
-
       // 몬스터 사망
       sendEvent(23, {
         monsterLevel: monster.level,
         score: score,
       });
 
-      // 기지의 체력 감소
-      sendEvent(24, {
-        monsterLevel: monster.level,
-        monsterAtk: monster.attackPower,
-        hp: baseHp,
-      });
-
       monsters.splice(i, 1);
     }
   }
-   // 현재 스코어가 최고 기록보다 높으면 최고 기록 갱신
-   if (score > highScore) {
-    highScore = score;
-    serverSocket.emit('renewalHighScore', { userId, score: highScore });  // 서버로 최고 기록 갱신 요청
-  }
-
 
   requestAnimationFrame(gameLoop); // 지속적으로 다음 프레임에 gameLoop 함수 호출할 수 있도록 함
 }
@@ -315,13 +293,12 @@ Promise.all([
   serverSocket.on('connection', (data) => {
     console.log('connection: ', data);
   });
-  
-   // 서버에서 갱신된 최고 기록을 받으면 화면에 표시
-   serverSocket.on('highScoreUpdated', (data) => {
-    highScore = data.highScore;
-    console.log(`최고 기록이 갱신되었습니다: ${highScore}`);
-  });
 
+    // 현재 스코어가 최고 기록보다 높으면 최고 기록 갱신
+    if (score > highScore) {
+      highScore = score;
+      serverSocket.emit('renewalHighScore', { userId, score: highScore });  // 서버로 최고 기록 갱신 요청
+    }
 
   /* 
     서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
