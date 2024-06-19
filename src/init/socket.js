@@ -21,7 +21,6 @@ const initSocket = (server) => {
       console.log('User disconnected:', socket.id);
     });
 
-    // 여기서 registerHandler를 호출합니다.
     registerHandler(io);
   });
 };
