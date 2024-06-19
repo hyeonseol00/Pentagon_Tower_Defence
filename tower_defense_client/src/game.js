@@ -1,4 +1,3 @@
-
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
@@ -168,9 +167,10 @@ function placeNewTower() {
 	*/
   if (userGold >= towerCost) {
     const { x, y } = getRandomPositionNearPath(200);
-const tower = new Tower(x, y);
-towers.push(tower);
-tower.draw(ctx, towerImage);
+    const tower = new Tower(x, y, towerCost);
+    towers.push(tower);
+    tower.draw(ctx, towerImage);
+
     // 타워 구입 이벤트
     sendEvent(22, {
       newTowerCoordinate: [x, y],
@@ -293,17 +293,17 @@ Promise.all([
   serverSocket.on('connection', (data) => {
     console.log('connection: ', data);
   });
+// 현재 스코어가 최고 기록보다 높으면 최고 기록 갱신
+    if (score > highScore) {
+      highScore = score;
+      serverSocket.emit('renewalHighScore', { userId, score: highScore });  // 서버로 최고 기록 갱신 요청
+    }
 
   /* 
     서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
     e.g. serverSocket.on("...", () => {...});
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
-// 현재 스코어가 최고 기록보다 높으면 최고 기록 갱신
-    if (score > highScore) {
-      highScore = score;
-      serverSocket.emit('renewalHighScore', { userId, score: highScore });  // 서버로 최고 기록 갱신 요청
-    }
 
   if (!isInitGame) {
     initGame();
