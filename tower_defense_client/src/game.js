@@ -148,7 +148,7 @@ function placeInitialTowers() {
 	*/
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y, towerCost);
+    const tower = new Tower(x, y);
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
@@ -167,7 +167,7 @@ function placeNewTower() {
 	*/
   if (userGold >= towerCost) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y);
+    const tower = new Tower(x, y, towerCost);
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
