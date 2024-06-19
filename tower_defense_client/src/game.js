@@ -149,7 +149,7 @@ function placeInitialTowers() {
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y);
-    towers.push(new tower);
+    towers.push(tower);
     tower.draw(ctx, towerImage);
 
     // 최초 타워 추가 이벤트
@@ -168,7 +168,7 @@ function placeNewTower() {
   if (userGold >= towerCost) {
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y, towerCost);
-    towers.push(new tower);
+    towers.push(tower);
     tower.draw(ctx, towerImage);
 
     // 타워 구입 이벤트
@@ -217,8 +217,12 @@ function gameLoop() {
       if (distance < tower.range) {
         tower.attack(monster);
       }
-    });
-  });
+   // 점수 업데이트 및 최고 기록 갱신
+   score += monster.level * 10;
+   if (score > highScore) {
+     highScore = score;
+   }
+ }
 
   // 몬스터가 공격을 했을 수 있으므로 기지 다시 그리기
   base.draw(ctx, baseImage);
