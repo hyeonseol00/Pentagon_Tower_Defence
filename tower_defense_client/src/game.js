@@ -149,7 +149,7 @@ function placeInitialTowers() {
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(x, y);
-    towers.push(tower);
+    towers.push(new tower);
     tower.draw(ctx, towerImage);
 
     // 최초 타워 추가 이벤트
