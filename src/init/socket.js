@@ -13,7 +13,7 @@ const initSocket = (server) => {
 
     
     registerHandler(io);
-
+};
     
     socket.on('renewalHighScore', async (payload) => {
       const response = await renewalHighScore(payload);
