@@ -1,3 +1,5 @@
+import { sendEvent } from './game.js';
+
 export class Base {
   constructor(x, y, maxHp) {
     // 생성자 안에서 기지의 속성을 정의한다고 생각하시면 됩니다!
@@ -33,9 +35,7 @@ export class Base {
     this.hp -= amount;
 
     sendEvent(24, {
-      monsterLevel: monster.level,
-      monsterAtk: monster.attackPower,
-      hp: baseHp,
+      hp: this.hp,
     });
 
     return this.hp <= 0; // 기지의 HP가 0 이하이면 true, 아니면 false

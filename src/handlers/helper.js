@@ -1,5 +1,7 @@
+import { CLIENT_VERSION } from '../../tower_defense_client/src/constants.js';
 import { getGameAssets } from '../init/assets.js';
 import { getUsers, removeUser } from '../models/user.model.js';
+import handlerMappings from './handlerMapping.js';
 
 export const handleDisconnect = (socket, uuid) => {
   removeUser(socket.id);
