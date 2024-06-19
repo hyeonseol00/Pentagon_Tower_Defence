@@ -5,25 +5,27 @@ import registerHandler from '../handlers/register.handler.js';
 import { renewalHighScore } from '../handlers/highScore.handler.js';
 
 const initSocket = (server) => {
-  const io = new SocketIO();
-  io.attach(server);
+  // Socket.IO 설정
+  const io = new SocketIO(server, {
+    cors: {
+      origin: '*',
+    },
+  });
 
   io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
-    // registerHandler(io); // 여기서는 registerHandler를 호출하지 않습니다.
+    // 레지스터 핸들러 초기화
+    registerHandler(socket);
 
     socket.on('renewalHighScore', async (payload) => {
       const response = await renewalHighScore(payload);
-      io.emit('highScoreUpdated', response);  
+      io.emit('highScoreUpdated', response);
     });
 
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
     });
-
-    // 여기서 registerHandler를 호출합니다.
-    registerHandler(io);
   });
 };
 
