@@ -1,4 +1,4 @@
-import { setAuthToken } from './GaApplication.js';
+import { setAuthToken, setUserId } from './GaApplication.js';
 
 document.getElementById('login').addEventListener('click', async () => {
   const username = document.getElementById('username').value;
@@ -14,6 +14,7 @@ document.getElementById('login').addEventListener('click', async () => {
   setAuthToken(
     document.cookie.match('(^|;) ?' + 'authorization' + '=([^;]*)(;|$)')[2],
   );
+  setUserId(username);
 
   if (response.status === 200) window.location.href = 'index.html';
 
