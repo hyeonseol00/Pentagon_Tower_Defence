@@ -168,10 +168,9 @@ function placeNewTower() {
 	*/
   if (userGold >= towerCost) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y, towerCost);
-    towers.push(tower);
-    tower.draw(ctx, towerImage);
-
+const newTower = new Tower(x, y);
+towers.push(newTower);
+newTower.draw(ctx, towerImage);
     // 타워 구입 이벤트
     sendEvent(22, {
       newTowerCoordinate: [x, y],
