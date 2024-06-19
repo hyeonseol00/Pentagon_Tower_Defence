@@ -217,8 +217,12 @@ function gameLoop() {
       if (distance < tower.range) {
         tower.attack(monster);
       }
-    });
-  });
+   // 점수 업데이트 및 최고 기록 갱신
+   score += monster.level * 10;
+   if (score > highScore) {
+     highScore = score;
+   }
+ }
 
   // 몬스터가 공격을 했을 수 있으므로 기지 다시 그리기
   base.draw(ctx, baseImage);
