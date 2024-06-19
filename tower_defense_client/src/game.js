@@ -3,6 +3,7 @@ import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './constants.js';
 import { getAuthToken } from './GaApplication.js';
+
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -150,6 +151,12 @@ function placeInitialTowers() {
     const tower = new Tower(x, y, towerCost);
     towers.push(tower);
     tower.draw(ctx, towerImage);
+
+    // 최초 타워 추가 이벤트
+    sendEvent(21, {
+      newTowerCoordinate: [x, y],
+      towerCoordinates: towers,
+    });
   }
 }
 
@@ -158,10 +165,20 @@ function placeNewTower() {
 	  타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치하면 됩니다.
 	  빠진 코드들을 채워넣어주세요! 
 	*/
-  const { x, y } = getRandomPositionNearPath(200);
-  const tower = new Tower(x, y);
-  towers.push(tower);
-  tower.draw(ctx, towerImage);
+  if (userGold >= towerCost) {
+    const { x, y } = getRandomPositionNearPath(200);
+    const tower = new Tower(x, y);
+    towers.push(tower);
+    tower.draw(ctx, towerImage);
+
+    // 타워 구입 이벤트
+    sendEvent(22, {
+      newTowerCoordinate: [x, y],
+      gold: userGold,
+    });
+  } else {
+    alert('골드가 부족합니다!');
+  }
 }
 
 function placeBase() {
@@ -199,6 +216,13 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
+        // 타워가 몬스터를 공격해서 죽였을 때
+        if (monster.hp <= 0) {
+          sendEvent(23, {
+            monsterLevel: monster.level,
+            score: score,
+          });
+        }
       }
     });
   });
@@ -212,12 +236,27 @@ function gameLoop() {
       const isDestroyed = monster.move(base);
       if (isDestroyed) {
         /* 게임 오버 */
+        sendEvent(3, { score: score });
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         location.reload();
       }
       monster.draw(ctx);
     } else {
-      /* 몬스터가 죽었을 때 */
+      /* 몬스터가 기지에 부딪쳐 죽었을 때 */
+
+      // 몬스터 사망
+      sendEvent(23, {
+        monsterLevel: monster.level,
+        score: score,
+      });
+
+      // 기지의 체력 감소
+      sendEvent(24, {
+        monsterLevel: monster.level,
+        monsterAtk: monster.attackPower,
+        hp: baseHp,
+      });
+
       monsters.splice(i, 1);
     }
   }
@@ -238,6 +277,9 @@ function initGame() {
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
+
+  // 게임 시작 이벤트
+  sendEvent(2, { timestamp: Date.now() });
 }
 
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
