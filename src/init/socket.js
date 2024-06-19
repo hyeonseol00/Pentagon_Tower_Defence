@@ -12,7 +12,7 @@ const initSocket = (server) => {
     console.log('A user connected:', socket.id);
 
     
-    registerHandler(socket);
+    registerHandler(io);
 
     
     socket.on('renewalHighScore', async (payload) => {
