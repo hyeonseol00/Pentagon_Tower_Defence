@@ -111,6 +111,6 @@ export const epicTowerHandler = async (userId, payload) => {
   
   return {
     status: 'success',
-    message: '에픽 타워를 획득하셨습니다!',
+    message: '황금 고블린 처치! 에픽 타워를 획득하셨습니다.',
   };
 }

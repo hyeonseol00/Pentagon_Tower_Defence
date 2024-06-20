@@ -237,6 +237,11 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
+        if (monster.hp <= 0) {
+          if (monster.monsterNumber === 5) {
+            placeEpicTower();
+          }
+        }
       }
     });
   });
@@ -251,6 +256,11 @@ function gameLoop() {
       );
       if (distance < epictower.range) {
         epictower.attack(monster);
+        if (monster.hp <= 0) {
+          if (monster.monsterNumber === 5) {
+            placeEpicTower();
+          }
+        }
       }
     });
   });
@@ -275,13 +285,10 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
 
-      if (monster.monsterNumber === 5) {
-        placeEpicTower();
-      }
-
       monsters.splice(i, 1);
-
-      sendEvent(23, { score, monsterNum: monster.monsterNumber });
+      if (monster.monsterNumber !== 5) { // 고블린이 기지에 부딪쳐도 점수를 주지 않는다
+        sendEvent(23, { score, monsterNum: monster.monsterNumber });
+      }
     }
   }
 

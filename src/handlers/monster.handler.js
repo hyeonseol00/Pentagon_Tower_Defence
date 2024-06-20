@@ -27,17 +27,9 @@ export const monsterKilledHandler = async (userId, payload) => {
 
   await updateUserData(userData);
 
-  if (payload.monsterNum === 5) {
-    return {
-      status: 'success',
-      message: '황금 고블린을 처치했습니다!',
-      data: userData,
-    };
-  } else {
-    return {
-      status: 'success',
-      message: '몬스터를 처치했습니다!',
-      data: userData,
-    };
-  }
+  return {
+    status: 'success',
+    message: '몬스터를 처치했습니다!',
+    data: userData,
+  };
 };
