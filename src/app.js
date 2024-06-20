@@ -5,8 +5,12 @@ import initSocket from './init/socket.js';
 import { loadGameAssets } from './init/assets.js';
 import errorHandlingMiddleware from './middlewares/error-handling.middleware.js';
 import accountsRouter from './routes/accounts.router.js';
+import connect from './mongodb/index.js';
+import { spawnTreasureGoblinIfNeeded } from './handlers/treasureGoblin.handler.js';
+
 
 dotEnv.config();
+connect();
 
 const app = express();
 const server = createServer(app);
@@ -23,6 +27,11 @@ initSocket(server);
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>');
 });
+
+// 일정 시간 간격으로 보물 고블린 출현 시도
+setInterval(async () => {
+  await spawnTreasureGoblinIfNeeded();
+}, 60000); // 1분마다 실행
 
 server.listen(PORT, async () => {
   console.log(`서버가 ${PORT}번 포트로 실행 성공했습니다.`);
