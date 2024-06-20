@@ -320,19 +320,20 @@ Promise.all([
 // 게임 시작 시 데이터 대입
 async function DataSync(data) {
   try {
+    console.log(data);
     // 몬스터에 대한 정보
     monsterLevel = 1;
     monsterSpawnInterval = 1200;
 
     // 유저 플레이에 대한 정보
-    userGold = data.commonData.data[0].user_gold;
-    baseHp = data.commonData.data[0].base_hp;
-    numOfInitialTowers = data.commonData.data[0].num_of_initial_towers;
+    userGold = data.commonData[0].user_gold;
+    baseHp = data.commonData[0].base_hp;
+    numOfInitialTowers = data.commonData[0].num_of_initial_towers;
 
     score = 0;
     highScore = 0;
 
-    // 정보를 알맞게 저눕 대입했을시 true 를 반환
+    // 정보를 알맞게 전부 대입했을시 true 를 반환
     return true;
   } catch (error) {
     // 정보 대입간에 문제가 발생 시 false 를 반환
