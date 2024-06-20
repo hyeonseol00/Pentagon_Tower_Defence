@@ -315,7 +315,7 @@ function syncData(data) {
   numOfInitialTowers = commonData.num_of_initial_towers;
   monsterLevel = monster.level;
   monsterSpawnInterval = monster.spawn_interval;
-  highScore = 0; // 기존 최고 점수, 인증 구현 후 추가 예정
+  highScore = 0; 
 }
 
 const sendEvent = (handlerId, payload) => {
