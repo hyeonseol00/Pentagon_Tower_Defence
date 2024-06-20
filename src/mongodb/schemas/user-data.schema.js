@@ -25,6 +25,10 @@ const userDataSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
+  tower_isUpgrades: {
+    type: Array,
+    required: true,
+  },
   gold: {
     type: Number,
     required: true,
@@ -35,4 +39,4 @@ const userDataSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('user_data', userDataSchema);
+export default mongoose.model('user-data', userDataSchema);

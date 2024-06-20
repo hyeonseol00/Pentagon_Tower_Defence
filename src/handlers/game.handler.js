@@ -26,7 +26,7 @@ export const gameEnd = async (userId, payload) => {
       broadcast: {
         message: '서버 최고기록이 갱신되었습니다!',
         userId,
-        highscore: payload.score + 100,
+        highscore: payload.score,
       },
     };
   }
