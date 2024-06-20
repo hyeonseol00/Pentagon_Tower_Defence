@@ -3,9 +3,9 @@ import { addUser } from '../models/user.model.js';
 import { handleConnection, handleDisconnect, handleEvent } from './helper.js';
 
 const registerHandler = (io) => {
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     const userUUID = uuidv4();
-    addUser({ uuid: userUUID, socketId: socket.id });
+    await addUser({ uuid: userUUID, socketId: socket.id });
 
     handleConnection(socket, userUUID);
 

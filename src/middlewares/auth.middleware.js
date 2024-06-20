@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { getAccounts } from '../models/account.model';
 
 export default async function (req, res, next) {
   try {
@@ -11,7 +12,8 @@ export default async function (req, res, next) {
 
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
     const id = decodedToken.id;
-    const account = getAccounts().find((account) => account.id == loginId);
+    const accounts = await getAccounts();
+    const account = accounts.find((account) => account.id == loginId);
 
     if (!account) {
       res.clearCookie('authorization');

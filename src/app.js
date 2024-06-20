@@ -5,8 +5,10 @@ import initSocket from './init/socket.js';
 import { loadGameAssets } from './init/assets.js';
 import errorHandlingMiddleware from './middlewares/error-handling.middleware.js';
 import accountsRouter from './routes/accounts.router.js';
+import connect from './mongodb/index.js';
 
 dotEnv.config();
+connect();
 
 const app = express();
 const server = createServer(app);
