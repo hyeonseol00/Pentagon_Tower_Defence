@@ -3,17 +3,17 @@ import { getGameAssets } from '../init/assets.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 
-export const handleDisconnect = (socket, uuid) => {
+export const handleDisconnect = async (socket, uuid) => {
   removeUser(socket.id);
   console.log(`사용자 접속 해제: ${socket.id}`);
-  console.log('현재 접속 중인 사용자:', getUsers());
+  console.log('현재 접속 중인 사용자:', await getUsers());
 };
 
-export const handleConnection = (socket, userUUID) => {
+export const handleConnection = async (socket, userUUID) => {
   console.log(
     `새로운 사용자가 접속했습니다: \"${socket.id}\"소켓으로 \"${userUUID}\"사용자가 접속했습니다.`,
   );
-  console.log('현재 접속 중인 사용자:', getUsers());
+  console.log('현재 접속 중인 사용자:', await getUsers());
 
   const { templates, monster, commonData } = getGameAssets();
 

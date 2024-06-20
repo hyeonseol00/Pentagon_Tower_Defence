@@ -10,8 +10,8 @@ const regex = /^[A-Za-z0-9]*$/;
 router.post('/sign-up', async (req, res, next) => {
   try {
     const { loginId, password } = req.body;
-    const isExistUser = getAccounts().find((account) => account.id == loginId);
-    console.log(getAccounts());
+    const accounts = await getAccounts();
+    const isExistUser = accounts.find((account) => account.id == loginId);
 
     if (isExistUser)
       return res.status(409).json({ message: '이미 존재하는 ID입니다.' });
@@ -27,7 +27,7 @@ router.post('/sign-up', async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // DB 저장부
-    addAccount({ id: loginId, password: hashedPassword });
+    await addAccount({ id: loginId, password: hashedPassword });
 
     return res.status(201).json({ message: '회원가입이 완료되었습니다.' });
   } catch (error) {
@@ -40,7 +40,8 @@ router.post('/sign-in', async (req, res, next) => {
   try {
     const { loginId, password } = req.body;
     // DB 호출부
-    const account = getAccounts().find((account) => account.id == loginId);
+    const accounts = await getAccounts();
+    const account = accounts.find((account) => account.id == loginId);
 
     if (!account)
       return res.status(401).json({ message: '존재하지 않는 ID입니다.' });

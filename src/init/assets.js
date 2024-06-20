@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import commonDataSchema from '../mongodb/schemas/common-data.schema.js';
+import monsterSchema from '../mongodb/schemas/monster.schema.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,12 +23,11 @@ const readFileAsync = (filename) => {
 
 export const loadGameAssets = async () => {
   try {
-    const [templates, monster, commonData] = await Promise.all([
-      readFileAsync('template.json'),
-      readFileAsync('monster.json'),
-      readFileAsync('common_data.json'),
+    const [monster, commonData] = await Promise.all([
+      monsterSchema.find().exec(),
+      commonDataSchema.find().exec(),
     ]);
-    gameAssets = { templates, monster, commonData };
+    gameAssets = { monster, commonData };
     return gameAssets;
   } catch (error) {
     throw new Error('에셋 데이터 로드에 실패했습니다: ' + error.message);
