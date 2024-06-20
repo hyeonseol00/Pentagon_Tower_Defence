@@ -4,6 +4,7 @@ import {
   purchaseTowerHandler,
   refundTowerHandler,
   upgradeTowerHandler,
+  epicTowerHandler,
 } from './tower.handler.js';
 import { monsterKilledHandler } from './monster.handler.js';
 import { monsterAttackedBaseHandler } from './base.handler.js';
@@ -17,6 +18,7 @@ const handlerMappings = {
   24: monsterAttackedBaseHandler,
   25: refundTowerHandler,
   26: upgradeTowerHandler,
+  27: epicTowerHandler,
 };
 
 export default handlerMappings;

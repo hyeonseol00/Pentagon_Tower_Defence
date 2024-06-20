@@ -99,3 +99,18 @@ export const upgradeTowerHandler = async (userId, payload) => {
     towerIdx: randIdx,
   };
 };
+
+export const epicTowerHandler = async (userId, payload) => {
+  const userData = await getUserData(userId);
+  userData.epic_tower_coordinates.push({
+    x: payload.x,
+    y: payload.y,
+  });
+
+  await updateUserData(userData);
+  
+  return {
+    status: 'success',
+    message: '에픽 타워를 획득하셨습니다!',
+  };
+}

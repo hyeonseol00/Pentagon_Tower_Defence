@@ -11,7 +11,7 @@ let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const NUM_OF_MONSTERS = 5; // 몬스터 개수
+const NUM_OF_MONSTERS = 6; // 몬스터 개수
 
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
@@ -23,6 +23,7 @@ let monsterLevel = 0; // 몬스터 레벨
 let monsterSpawnInterval = 0; // 몬스터 생성 주기
 const monsters = [];
 const towers = [];
+const epictowers = [];
 
 let score = 0; // 게임 점수
 let highScore = 0; // 기존 최고 점수
@@ -34,6 +35,9 @@ backgroundImage.src = 'images/bg.webp';
 
 const towerImage = new Image();
 towerImage.src = 'images/tower.png';
+
+const epictowerImage = new Image();
+epictowerImage.src = 'images/epic_tower.png';
 
 const upgradedTowerImage = new Image();
 upgradedTowerImage.src = 'images/tower_upgraded.png';
@@ -176,6 +180,16 @@ function placeNewTower() {
   tower.draw(ctx, towerImage);
 }
 
+function placeEpicTower() {
+  const { x, y } = getRandomPositionNearPath(200);
+
+  sendEvent(27, { x, y, gold: userGold });
+
+  const epictower = new Tower(x, y, towerCost, true);
+  epictowers.push(epictower);
+  epictower.draw(ctx, epictowerImage);
+}
+
 function refundLastTower() {
   sendEvent(25, {});
 }
@@ -227,6 +241,20 @@ function gameLoop() {
     });
   });
 
+  epictowers.forEach((epictower) => {
+    epictower.draw(ctx, epictowerImage);
+    epictower.updateCooldown();
+    monsters.forEach((monster) => {
+      const distance = Math.sqrt(
+        Math.pow(epictower.x - monster.x, 2) +
+          Math.pow(epictower.y - monster.y, 2),
+      );
+      if (distance < epictower.range) {
+        epictower.attack(monster);
+      }
+    });
+  });
+
   // 몬스터가 공격을 했을 수 있으므로 기지 다시 그리기
   base.draw(ctx, baseImage);
 
@@ -246,9 +274,14 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
+
+      if (monster.monsterNumber === 5) {
+        placeEpicTower();
+      }
+
       monsters.splice(i, 1);
 
-      sendEvent(23, { score });
+      sendEvent(23, { score, monsterNum: monster.monsterNumber });
     }
   }
 
