@@ -1,5 +1,5 @@
 {
-  "name": "Pentagon_Tower_Defense",
+  "name": "pentagon_tower_defense",
   "version": "1.0.0",
   "description": "",
   "main": "src/app.js",
@@ -12,9 +12,11 @@
   "type": "module",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.3",
     "socket.io": "^4.7.5",
     "uuid": "^10.0.0"
   },
