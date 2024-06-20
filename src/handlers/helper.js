@@ -4,7 +4,7 @@ import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 
 export const handleDisconnect = async (socket, uuid) => {
-  removeUser(socket.id);
+  await removeUser(socket.id);
   console.log(`사용자 접속 해제: ${socket.id}`);
   console.log('현재 접속 중인 사용자:', await getUsers());
 };
@@ -15,18 +15,16 @@ export const handleConnection = async (socket, userUUID) => {
   );
   console.log('현재 접속 중인 사용자:', await getUsers());
 
-  const { templates, monster, commonData } = getGameAssets();
+  const { monster, commonData } = getGameAssets();
 
   socket.emit('connection', {
     uuid: userUUID,
-  });
-  socket.emit('dataSync', {
-    monster: monster,
-    commonData: commonData,
+    monster: monster[0],
+    commonData,
   });
 };
 
-export const handleEvent = (io, socket, data) => {
+export const handleEvent = async (io, socket, data) => {
   if (!CLIENT_VERSION.includes(data.clientVersion)) {
     socket.emit('response', {
       status: 'fail',
@@ -44,11 +42,11 @@ export const handleEvent = (io, socket, data) => {
     return;
   }
 
-  const response = handler(data.userId, data.payload);
+  const response = await handler(data.userId, data.payload);
   if (response.broadcast) {
-    io.emit('response', 'broadcast');
-    return;
+    io.emit('response', response.broadcast);
   }
 
+  if (response.data) socket.emit('dataSync', response);
   socket.emit('response', response);
 };

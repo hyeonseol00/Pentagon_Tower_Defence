@@ -3,7 +3,6 @@ import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './constants.js';
 import { getAuthToken, getUserId } from './GaApplication.js';
-
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -148,15 +147,11 @@ function placeInitialTowers() {
 	*/
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y);
+    const tower = new Tower(x, y, towerCost);
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
-    // 최초 타워 추가 이벤트
-    sendEvent(21, {
-      newTowerCoordinate: [x, y],
-      towerCoordinates: towers,
-    });
+    sendEvent(21, { newTowerCoordinates: [x, y] });
   }
 }
 
@@ -165,20 +160,15 @@ function placeNewTower() {
 	  타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치하면 됩니다.
 	  빠진 코드들을 채워넣어주세요! 
 	*/
-  if (userGold >= towerCost) {
-    const { x, y } = getRandomPositionNearPath(200);
-    const tower = new Tower(x, y, towerCost);
-    towers.push(tower);
-    tower.draw(ctx, towerImage);
+  const { x, y } = getRandomPositionNearPath(200);
 
-    // 타워 구입 이벤트
-    sendEvent(22, {
-      newTowerCoordinate: [x, y],
-      gold: userGold,
-    });
-  } else {
-    console.log('골드가 부족합니다!');
-  }
+  if (userGold >= towerCost)
+    sendEvent(22, { newTowerCoordinates: [x, y], gold: userGold });
+  else return;
+
+  const tower = new Tower(x, y);
+  towers.push(tower);
+  tower.draw(ctx, towerImage);
 }
 
 function placeBase() {
@@ -226,22 +216,22 @@ function gameLoop() {
   for (let i = monsters.length - 1; i >= 0; i--) {
     const monster = monsters[i];
     if (monster.hp > 0) {
-      const isDestroyed = monster.move(base);
+      const isDestroyed = monster.move(base, score);
       if (isDestroyed) {
         /* 게임 오버 */
-        sendEvent(3, { score: score });
-        alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
-        location.reload();
+        sendEvent(3, { score });
+
+        setTimeout(() => {
+          alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
+          location.reload();
+        }, 500);
       }
       monster.draw(ctx);
     } else {
-      // 몬스터 사망
-      sendEvent(23, {
-        monsterLevel: monster.level,
-        score: score,
-      });
-
+      /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
+
+      sendEvent(23, { score });
     }
   }
 
@@ -249,7 +239,6 @@ function gameLoop() {
 }
 
 function initGame() {
-  console.log('게임 시작');
   if (isInitGame) {
     return;
   }
@@ -262,9 +251,6 @@ function initGame() {
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
-
-  // 게임 시작 이벤트
-  sendEvent(2, { timestamp: Date.now() });
 }
 
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
@@ -288,25 +274,27 @@ Promise.all([
   });
 
   serverSocket.on('response', (data) => {
-    console.log(data);
+    console.log('response: ', data);
   });
 
   serverSocket.on('connection', (data) => {
-    console.log('connection: ', data.uuid);
+    syncData(data);
+    console.log('connection: ', data);
+
+    if (!isInitGame) {
+      initGame();
+    }
+    sendEvent(2, {});
   });
 
-  serverSocket.on('dataSync', async (data) => {
-    console.log('데이터 싱크 시도');
-    let dataSync = await DataSync(data);
-    if (dataSync) {
-      console.log('데이터가 성공적으로 싱크되었습니다.');
-      if (!isInitGame) {
-        initGame();
-      }
-      return;
-    } else {
-      console.log('데이터 싱크를 실패했습니다.');
-      //location.reload();
+  serverSocket.on('dataSync', (data) => {
+    if (data.data) {
+      score = data.data.score;
+      userGold = data.data.gold;
+    }
+    if (data.monster) {
+      monsterLevel = data.monster.level;
+      monsterSpawnInterval = data.monster.monsterSpawnInterval;
     }
   });
 
@@ -317,28 +305,17 @@ Promise.all([
   */
 });
 
-// 게임 시작 시 데이터 대입
-async function DataSync(data) {
-  try {
-    console.log(data);
-    // 몬스터에 대한 정보
-    monsterLevel = 1;
-    monsterSpawnInterval = 1200;
+function syncData(data) {
+  const commonData = data.commonData[0];
+  const monster = data.monster;
 
-    // 유저 플레이에 대한 정보
-    userGold = data.commonData[0].user_gold;
-    baseHp = data.commonData[0].base_hp;
-    numOfInitialTowers = data.commonData[0].num_of_initial_towers;
-
-    score = 0;
-    highScore = 0;
-
-    // 정보를 알맞게 전부 대입했을시 true 를 반환
-    return true;
-  } catch (error) {
-    // 정보 대입간에 문제가 발생 시 false 를 반환
-    return false;
-  }
+  userGold = commonData.user_gold;
+  baseHp = commonData.base_hp;
+  towerCost = commonData.tower_cost;
+  numOfInitialTowers = commonData.num_of_initial_towers;
+  monsterLevel = monster.level;
+  monsterSpawnInterval = monster.spawn_interval;
+  highScore = 0; // 기존 최고 점수, 인증 구현 후 추가 예정
 }
 
 const sendEvent = (handlerId, payload) => {
