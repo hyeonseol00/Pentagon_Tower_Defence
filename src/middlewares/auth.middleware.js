@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
-import { getAccounts } from '../models/account.model';
+import { getAccounts } from '../models/account.model.js';
 
-export default async function (req, res, next) {
+export default async (socket, next) => {
   try {
-    const { authorization } = req.cookies;
+    const { authorization } = socket.request.cookies;
     if (!authorization) throw new Error('토큰이 존재하지 않습니다.');
 
     const [tokenType, token] = authorization.split(' ');
@@ -13,28 +13,28 @@ export default async function (req, res, next) {
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
     const id = decodedToken.id;
     const accounts = await getAccounts();
-    const account = accounts.find((account) => account.id == loginId);
+    const account = accounts.find((account) => account.id == id);
 
     if (!account) {
-      res.clearCookie('authorization');
       throw new Error('토큰 사용자가 존재하지 않습니다.');
     }
 
-    req.account = account;
+    socket.userId = id;
 
     next();
   } catch (error) {
-    res.clearCookie('authorization');
-
+    let message;
     switch (error.name) {
       case 'TokenExpiredError':
-        return res.status(401).json({ message: '토큰이 만료되었습니다.' });
+        message = '토큰이 만료되었습니다.';
+        break;
       case 'JsonWebTokenError':
-        return res.status(401).json({ message: '토큰이 조작되었습니다.' });
+        message = '토큰이 조작되었습니다.';
+        break;
       default:
-        return res
-          .status(401)
-          .json({ message: error.message ?? '비정상적인 요청입니다.' });
+        message = error.message ?? '비정상적인 요청입니다.';
     }
+    socket.emit('response', { message });
+    next();
   }
-}
+};
