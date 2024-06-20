@@ -299,6 +299,17 @@ Promise.all([
     e.g. serverSocket.on("...", () => {...});
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
+ serverSocket.on('syncC/S', (data) => {
+  if(data.data) {
+    score = data.data.score;
+    highScore = data.data.highScore;
+    userGold = data.data.gold;
+  }
+  if (data.monster) {
+    monsterLevel = data.monster.level;
+    monsterSpawnInterval = data.monster.monsterSpawnInterval;
+  }
+ })
 
   if (!isInitGame) {
     initGame();

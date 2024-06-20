@@ -48,9 +48,9 @@ export const handleEvent = (io, socket, data) => {
   // handleEvent 로 game version 이 일치하는지 확인
   // handler 로 client가 보내는 sendEvent에 handlerId가 있는지 확인
   // response 로 client의 요청 사항에 대해 응답을 보냄
-  if (response) {
+  if (response.data) {
     socket.emit('syncC/S', response)
   }
-  
+
   socket.emit('response', response);
 };
