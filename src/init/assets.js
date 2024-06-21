@@ -25,7 +25,7 @@ export const loadGameAssets = async () => {
   try {
     const [monster, commonData] = await Promise.all([
       monsterSchema.find().exec(),
-      commonDataSchema.find().exec(),
+      commonDataSchema.findOne().exec(),
     ]);
     gameAssets = { monster, commonData };
     return gameAssets;
