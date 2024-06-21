@@ -237,11 +237,6 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
-        if (monster.hp <= 0) {
-          if (monster.monsterNumber === 5) {
-            placeEpicTower();
-          }
-        }
       }
     });
   });
@@ -256,11 +251,6 @@ function gameLoop() {
       );
       if (distance < epictower.range) {
         epictower.attack(monster);
-        if (monster.hp <= 0) {
-          if (monster.monsterNumber === 5) {
-            placeEpicTower();
-          }
-        }
       }
     });
   });
@@ -271,7 +261,7 @@ function gameLoop() {
   for (let i = monsters.length - 1; i >= 0; i--) {
     const monster = monsters[i];
     if (monster.hp > 0) {
-      const isDestroyed = monster.move(base, score);
+      const isDestroyed = monster.move(base, monsterImages);
       if (isDestroyed) {
         /* 게임 오버 */
         sendEvent(3, { score });
@@ -284,10 +274,14 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
+      if (monster.monsterNumber === 5 && monster.x < window.screenX - 5) {
+        placeEpicTower();
+      }
 
       monsters.splice(i, 1);
-      if (monster.monsterNumber !== 5) { // 고블린이 기지에 부딪쳐도 점수를 주지 않는다
-        sendEvent(23, { score, monsterNum: monster.monsterNumber });
+      if (monster.monsterNumber !== 5) {
+        // 고블린이 기지에 부딪쳐도 점수를 주지 않는다
+        sendEvent(23, { score });
       }
     }
   }
