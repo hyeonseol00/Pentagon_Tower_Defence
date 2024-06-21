@@ -274,7 +274,10 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
-      if (monster.monsterNumber === 5 && monster.x < monsterPath[monsterPath.length - 1].x - 3) {
+      if (
+        monster.monsterNumber === 5 &&
+        monster.x < monsterPath[monsterPath.length - 1].x - 3
+      ) {
         placeEpicTower();
       }
 
@@ -341,6 +344,7 @@ Promise.all([
   serverSocket.on('dataSync', (data) => {
     if (data.data) {
       score = data.data.score;
+      highScore = data.data.user_high_score;
       userGold = data.data.gold;
     }
     if (data.monster) {
