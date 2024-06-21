@@ -371,6 +371,18 @@
     placeEpicTower();
   }
   ```
+  
+  ```js
+  function placeEpicTower() {
+    const { x, y } = getRandomPositionNearPath(200);
+
+    sendEvent(27, { x, y, gold: userGold });
+
+    const epictower = new Tower(x, y, towerCost, true);
+    epictowers.push(epictower);
+    epictower.draw(ctx, epictowerImage);
+  }
+  ```
 
   ```js
   if (this.monsterNumber === monsterImages.length - 1) {
@@ -387,8 +399,8 @@
     this.maxHp = 100 + 10 * level; // 몬스터의 현재 HP
   }
   ```
-
-  - handlerId: 26
+  
+  - handlerId: 27
   - 황금 고블린은 1퍼센트의 확률로 등장한다
   - 황금 고블린은 일반 몬스터의 2배의 속도로 움직이지만 체력이 더 낮다
   - 황금 고블린은 일반 몬스터와 달리 처치해도 Score를 주지 않는다
@@ -423,3 +435,8 @@
     - 에픽 타워는 일반 타워의 1.5배의 공격력을 가지고 있다
     - 에픽 타워는 일반 타워의 4배의 공격 속도를 가지고 있다
     - 에픽 타워는 타워 환불로 환불되지 않는다
+
+
+## ERD DIAGRAM
+
+![alt text](image.png)
