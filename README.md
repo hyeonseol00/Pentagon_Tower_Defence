@@ -376,7 +376,7 @@
 
   ```js
   const randomValue = Math.random();
-  if (randomValue < 0.2) {
+  if (randomValue < 0.01) {
     // 1프로 확률
     this.monsterNumber = monsterImages.length - 1; // 6번 황금 고블린
   } else {
