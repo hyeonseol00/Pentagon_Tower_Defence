@@ -25,6 +25,10 @@ const userDataSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
+  epic_tower_coordinates: {
+    type: Array,
+    required: true,
+  },
   tower_isUpgrades: {
     type: Array,
     required: true,

@@ -8,7 +8,7 @@ export const monsterKilledHandler = async (userId, payload) => {
   if (Math.abs(userData.score - payload.score) >= 200) {
     return { status: 'fail', message: '점수 데이터가 잘못되었습니다!' };
   }
-  
+
   userData.score += 100;
 
   if (userData.monster_level <= userData.score / 2000) {
