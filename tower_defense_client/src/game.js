@@ -274,7 +274,7 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
-      if (monster.monsterNumber === 5 && monster.x < window.screenX - 5) {
+      if (monster.monsterNumber === 5 && monster.x < monsterPath[monsterPath.length - 1].x - 3) {
         placeEpicTower();
       }
 
