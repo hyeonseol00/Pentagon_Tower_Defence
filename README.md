@@ -354,12 +354,14 @@
 - 황금 고블린 이벤트
 
   ```js
-  const randomValue = Math.random();
-  if (randomValue < 0.2) {
-    // 1프로 확률
-    this.monsterNumber = monsterImages.length - 1; // 6번 황금 고블린
-  } else {
-    this.monsterNumber = Math.floor(Math.random() * (monsterImages.length - 1)); // 1번부터 5번 몬스터
+  function placeEpicTower() {
+    const { x, y } = getRandomPositionNearPath(200);
+
+    sendEvent(27, { x, y, gold: userGold });
+
+    const epictower = new Tower(x, y, towerCost, true);
+    epictowers.push(epictower);
+    epictower.draw(ctx, epictowerImage);
   }
   ```
 
@@ -371,16 +373,14 @@
     placeEpicTower();
   }
   ```
-  
+
   ```js
-  function placeEpicTower() {
-    const { x, y } = getRandomPositionNearPath(200);
-
-    sendEvent(27, { x, y, gold: userGold });
-
-    const epictower = new Tower(x, y, towerCost, true);
-    epictowers.push(epictower);
-    epictower.draw(ctx, epictowerImage);
+  const randomValue = Math.random();
+  if (randomValue < 0.2) {
+    // 1프로 확률
+    this.monsterNumber = monsterImages.length - 1; // 6번 황금 고블린
+  } else {
+    this.monsterNumber = Math.floor(Math.random() * (monsterImages.length - 1)); // 1번부터 5번 몬스터
   }
   ```
 
