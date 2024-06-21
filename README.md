@@ -439,4 +439,4 @@
 
 ## ERD DIAGRAM
 
-![alt text](image.png)
+![image](https://github.com/hyeonseol00/Pentagon_Tower_Defense_Private/assets/101966192/766a5aea-2e29-4a2e-9ca7-84a40733701e)
